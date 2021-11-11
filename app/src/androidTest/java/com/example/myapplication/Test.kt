@@ -13,11 +13,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.test.espresso.Espresso.*
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import org.junit.Rule
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
+import androidx.test.espresso.matcher.ViewMatchers.*
 import org.junit.Assert
 
 /**
@@ -50,17 +49,17 @@ class Test {
         onView(withId(R.id.activity_main)).check(matches(isDisplayed()))
         when(b) {
             1->{
-            onView(withId(R.id.bnToFirst)).check(doesNotExist())
-                    onView(withId(R.id.bnToSecond)).check(matches(isDisplayed()))
-                    onView(withId(R.id.bnToThird)).check(doesNotExist())}
+                onView(withId(R.id.bnToFirst)).check(doesNotExist())
+                onView(withId(R.id.bnToSecond)).check(matches(isDisplayed()))
+                onView(withId(R.id.bnToThird)).check(doesNotExist())}
             2->{
-            onView(withId(R.id.bnToFirst)).check(matches(isDisplayed()))
-                    onView(withId(R.id.bnToSecond)).check(doesNotExist())
-                    onView(withId(R.id.bnToThird)).check(matches(isDisplayed()))}
+                onView(withId(R.id.bnToFirst)).check(matches(isDisplayed()))
+                onView(withId(R.id.bnToSecond)).check(doesNotExist())
+                onView(withId(R.id.bnToThird)).check(matches(isDisplayed()))}
             3->{
-            onView(withId(R.id.bnToFirst)).check(matches(isDisplayed()))
-                    onView(withId(R.id.bnToSecond)).check(matches(isDisplayed()))
-                    onView(withId(R.id.bnToThird)).check(doesNotExist())}
+                onView(withId(R.id.bnToFirst)).check(matches(isDisplayed()))
+                onView(withId(R.id.bnToSecond)).check(matches(isDisplayed()))
+                onView(withId(R.id.bnToThird)).check(doesNotExist())}
         }
     }
 
@@ -218,7 +217,7 @@ class Test {
         }
     }
     private fun checkFragment(a: Int) {
-       selectFragment(a)
+        selectFragment(a)
         activityRule.scenario.onActivity { activity ->
             activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         }
@@ -240,6 +239,37 @@ class Test {
         openAbout()
         checkFragment(4)
 
+    }
+
+    @Test
+    fun upNavigationTest() {
+        buttonsAndFragmentsChecker1()
+        openAbout()
+        buttonsAndFragmentsCheckerAbout()
+        onView(withContentDescription(R.string.nav_app_bar_navigate_up_description)).perform(click())
+        buttonsAndFragmentsChecker1()
+        onView(withId(R.id.bnToSecond)).perform(click())
+        buttonsAndFragmentsChecker2()
+        openAbout()
+        buttonsAndFragmentsCheckerAbout()
+        onView(withContentDescription(R.string.nav_app_bar_navigate_up_description)).perform(click())
+        buttonsAndFragmentsChecker2()
+        onView(withId(R.id.bnToThird)).perform(click())
+        buttonsAndFragmentsChecker3()
+        openAbout()
+        buttonsAndFragmentsCheckerAbout()
+        onView(withContentDescription(R.string.nav_app_bar_navigate_up_description)).perform(click())
+        buttonsAndFragmentsChecker3()
+        onView(withContentDescription(R.string.nav_app_bar_navigate_up_description)).perform(click())
+        buttonsAndFragmentsChecker2()
+        onView(withContentDescription(R.string.nav_app_bar_navigate_up_description)).perform(click())
+        buttonsAndFragmentsChecker1()
+        try {
+            onView(withContentDescription(R.string.nav_app_bar_navigate_up_description)).perform(click())
+            assert(false)
+        } catch (NoActivityResumedException: Exception) {
+            assert(true)
+        }
     }
 
 
